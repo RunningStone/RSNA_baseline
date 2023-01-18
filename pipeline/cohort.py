@@ -51,6 +51,7 @@ class Cohort:
 
         # copy the df for split train and test
         self.all_df = self.df.copy()
+        print("Cohort read filelist done!")
 
     def read_slide(self,df:pd.DataFrame,idx:int):
         """
@@ -74,8 +75,8 @@ class Cohort:
         get K-th split of the dataset 
         """
         train_index, val_index = next(iter(self.kfold.split(self.all_df)))
-        self.train_df = pd.DataFrame(self.all_df.ix[train_index])
-        self.val_df = pd.DataFrame(self.all_df.ix[val_index])
+        self.train_df = pd.DataFrame(self.all_df.iloc[train_index])
+        self.val_df = pd.DataFrame(self.all_df.iloc[val_index])
 
     def set_train_val(self,is_train:bool):
         if self.kfold is not None:
