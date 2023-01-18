@@ -32,7 +32,7 @@ class RSNADataset(Dataset):
         self.additional_info = additional_info
             
     def __len__(self):
-        return len(self.cohort.loc_list)
+        return len(self.df)
     
     def get_additional_info(self,idx:int):
         if self.additional_info is not None and len(self.additional_info) > 0:
