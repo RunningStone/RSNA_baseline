@@ -20,6 +20,8 @@ class pl_base(pl.LightningModule):
         self.model_para = model_para
         #self.save_hyperparameters()
 
+        self.metrics()
+
     def metrics(self):
         metrics = create_metrics(self.model_para.output_size)
 

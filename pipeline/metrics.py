@@ -25,5 +25,5 @@ def create_metrics(n_classes,):
                                                                          num_classes = 2),
                                                      torchmetrics.Precision(average = 'macro',
                                                                             num_classes = 2)])
-        return AUROC,ROC,metrics_template
+        return metrics_template
 
