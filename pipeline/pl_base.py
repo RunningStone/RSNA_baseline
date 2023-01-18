@@ -36,14 +36,14 @@ class pl_base(pl.LightningModule):
         y_hat = self.model(img,meta)
         loss = self.criterion(y_hat, y)
         self.log('train_loss', loss,logger = True)
-        return {'train_loss', loss}
+        return {'train_loss': loss}
     
     def validation_step(self, batch, batch_idx):
         img,meta, y = self.pre_process(batch)
         y_hat = self.model(img,meta)
         loss = self.criterion(y_hat, y)
         self.log('val_loss', loss,logger = True)
-        return {'val_loss', loss,'Y_hat',y_hat,'label',y}
+        return {'val_loss': loss,'Y_hat':y_hat,'label':y}
     
     def configure_optimizers(self):
         opt_para_dict = self.pl_para.opt_paras
