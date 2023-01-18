@@ -7,13 +7,15 @@ from albumentations.pytorch import ToTensorV2
 
 def get_transform(is_train=True, vertical_flip=0.5, horizontal_flip=0.5):
     if is_train:
-        transform = Compose([RandomResizedCrop(height=224, width=224),
+        transform = Compose([   Resize(height=512,width=512,always_apply=True),
+                                RandomResizedCrop(height=224, width=224),
                                       ShiftScaleRotate(rotate_limit=90, scale_limit = [0.8, 1.2]),
                                       HorizontalFlip(p = horizontal_flip),
                                       VerticalFlip(p = vertical_flip),
                                       ToTensorV2()])
     else:
-        transform = Compose([ToTensorV2()])
+        transform = Compose([Resize(height=512,width=512,always_apply=True),
+                            ToTensorV2()])
     return transform
 
 def get_three_channels(img):
