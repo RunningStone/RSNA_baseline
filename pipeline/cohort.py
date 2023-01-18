@@ -61,7 +61,7 @@ class Cohort:
         return: 
             image: np.array
         """
-        image_path = df['path'][idx]
+        image_path = df.iloc[idx]['path']
         image = pydicom.dcmread(image_path).pixel_array.astype(np.float32)
         return image
 
