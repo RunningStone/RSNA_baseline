@@ -34,6 +34,6 @@ class PL_Para:
     num_workers = 8
 
     # define data augmentation
-    get_transform:callable=get_transform,
-    three_channels_fn:callable=get_three_channels,
+    get_transform:callable=get_transform
+    three_channels_fn:callable=get_three_channels
     additional_info = ['laterality', 'view', 'age', 'implant']
