@@ -27,20 +27,20 @@ class pl_base(pl.LightningModule):
         self.test_metrics = metrics.clone(prefix = 'test_')
 
     def pre_process(self, batch):
-        x, y = batch
+        img,meta, y = batch
         y = y.unsqueeze(1).float()
-        return x, y
+        return img,meta, y
 
     def training_step(self, batch, batch_idx):
-        x, y = self.pre_process(batch)
-        y_hat = self.model(x)
+        img,meta, y = self.pre_process(batch)
+        y_hat = self.model(img,meta)
         loss = self.criterion(y_hat, y)
         self.log('train_loss', loss)
         return loss
     
     def validation_step(self, batch, batch_idx):
-        x, y = self.pre_process(batch)
-        y_hat = self.model(x)
+        img,meta, y = self.pre_process(batch)
+        y_hat = self.model(img,meta)
         loss = self.criterion(y_hat, y)
         self.log('val_loss', loss,'Y_hat',y_hat,'label',y)
         return loss
