@@ -39,7 +39,7 @@ class BaselinePreTrain(nn.Module):
 
         
         # Define Feature part (IMAGE)
-        self.get_encoder() # 1000 neurons out
+        self.get_encoder() # get encoder from timm
         # (metadata)
         self.csv = nn.Sequential(nn.Linear(self.no_columns, self.column_out_dim),
                                  nn.BatchNorm1d(self.column_out_dim),

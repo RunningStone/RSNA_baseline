@@ -51,7 +51,7 @@ class pl_base(pl.LightningModule):
         optimizer = self.pl_para.opt_func(self.model.parameters(), **opt_para_dict)
         scheduler = self.pl_para.sch_func(optimizer=optimizer, **self.pl_para.sch_para)
         
-        return optimizer, scheduler
+        return [optimizer], [scheduler]
 
     def training_epoch_end(self, training_step_outputs):
         avg_loss = torch.stack([x for x in training_step_outputs]).mean()

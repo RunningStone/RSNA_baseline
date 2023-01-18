@@ -3,6 +3,8 @@ import attr
 import torch
 import torch.nn as nn
 
+from .data_aug import get_transform,get_three_channels
+
 @attr.s
 class PL_Para:
 
@@ -30,3 +32,8 @@ class PL_Para:
     batch_size = 32           # for train
     shuffle = True
     num_workers = 8
+
+    # define data augmentation
+    get_transform:callable=get_transform,
+    three_channels_fn:callable=get_three_channels,
+    additional_info = ['laterality', 'view', 'age', 'implant']

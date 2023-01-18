@@ -26,10 +26,12 @@ from .models.pl_baseline import pl_baseline
 
 #----> init model parameters
 model_para = BaselinePara()
+model_para.no_columns = 4
 #----> init paras
 #pl_para you can define model,loss,optimizer,
 # scheduler and relevent parameters
-pl_para = PL_Para(model_define = BaselinePreTrain)
+pl_para = PL_Para()
+pl_para.model_define = BaselinePreTrain
 
 
 #----> init model
