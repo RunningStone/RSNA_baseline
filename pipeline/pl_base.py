@@ -35,15 +35,15 @@ class pl_base(pl.LightningModule):
         img,meta, y = self.pre_process(batch)
         y_hat = self.model(img,meta)
         loss = self.criterion(y_hat, y)
-        self.log('train_loss', loss)
-        return loss
+        self.log('train_loss', loss,logger = True)
+        return {'train_loss', loss}
     
     def validation_step(self, batch, batch_idx):
         img,meta, y = self.pre_process(batch)
         y_hat = self.model(img,meta)
         loss = self.criterion(y_hat, y)
-        self.log('val_loss', loss,'Y_hat',y_hat,'label',y)
-        return loss
+        self.log('val_loss', loss,logger = True)
+        return {'val_loss', loss,'Y_hat',y_hat,'label',y}
     
     def configure_optimizers(self):
         opt_para_dict = self.pl_para.opt_paras
@@ -54,8 +54,8 @@ class pl_base(pl.LightningModule):
         return [optimizer], [scheduler]
 
     def training_epoch_end(self, training_step_outputs):
-        avg_loss = torch.stack([x for x in training_step_outputs]).mean()
-        self.log('avg_train_loss', avg_loss)
+        avg_loss = torch.stack([x["train_loss"] for x in training_step_outputs]).mean()
+        self.log('avg_train_loss', avg_loss,on_epoch = True, logger = True)
 
         
     def validation_epoch_end(self, val_step_outputs):
