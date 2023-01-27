@@ -26,7 +26,7 @@ class pl_base(pl.LightningModule):
         self.metrics()
 
     def metrics(self):
-        metrics = create_metrics(self.model_para.output_size)
+        metrics = self.pl_para.create_metrics(self.model_para.output_size)
 
         self.valid_metrics = metrics.clone(prefix = 'val_')
         self.test_metrics = metrics.clone(prefix = 'test_')

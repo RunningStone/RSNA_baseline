@@ -43,4 +43,4 @@ class PL_Para:
     additional_info = ['age', 'implant'] # should be number if you want to feed into network
 
     #---->evaluate metric
-    create_metric:callable = None # need define in models part or import create_cFscore 
+    create_metrics:callable = None # need define in models part or import create_cFscore 
