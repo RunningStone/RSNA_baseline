@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 
 from .data_aug import get_transform,get_three_channels
+from .metrics import create_metrics,create_cFscore
 
 @attr.s
 class PL_Para:
@@ -38,5 +39,8 @@ class PL_Para:
 
     # define data augmentation
     get_transform:callable=get_transform
-    three_channels_fn:callable=get_three_channels
+    post_processing:callable=get_three_channels
     additional_info = ['age', 'implant'] # should be number if you want to feed into network
+
+    #---->evaluate metric
+    create_metric:callable = None # need define in models part or import create_cFscore 

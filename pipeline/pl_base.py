@@ -11,6 +11,9 @@ from .metrics import create_metrics
 
 
 class pl_base(pl.LightningModule):
+    """
+    base class for model implementation
+    """
     def __init__(self,pl_para:PL_Para, model_para):
         super().__init__()
         self.pl_para = pl_para
@@ -35,17 +38,20 @@ class pl_base(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         img,meta, y = self.pre_process(batch)
-        y_hat = self.model(img,meta)
-        loss = self.criterion(y_hat, y)
+        results_dict = self.model(img,meta)
+        y_prob = results_dict['Y_prob']
+
+        loss = self.criterion(y_prob, y)
         self.log('train_loss', loss,logger = True)
         return {'loss': loss}
     
     def validation_step(self, batch, batch_idx):
         img,meta, y = self.pre_process(batch)
-        y_hat = self.model(img,meta)
-        loss = self.criterion(y_hat, y)
+        results_dict = self.model(img,meta)
+        y_prob = results_dict['Y_prob']
+        loss = self.criterion(y_prob, y)
         self.log('val_loss', loss,logger = True)
-        return {'val_loss': loss,'Y_hat':y_hat,'label':y}
+        return {'val_loss': loss,'Y_prob':y_prob,'label':y, 'Y_hat':results_dict['Y_hat']}
     
     def configure_optimizers(self):
         opt_para_dict = self.pl_para.opt_paras

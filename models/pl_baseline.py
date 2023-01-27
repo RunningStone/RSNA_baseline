@@ -1,7 +1,7 @@
 from ..pipeline.pl_base import pl_base
 
 # do modification here
-
+import torch
 
 class pl_baseline(pl_base):
     def __init__(self,pl_para, model_para):
@@ -25,4 +25,13 @@ class pl_baseline(pl_base):
 
     def validation_epoch_end(self, val_step_outputs):
         # change validation epoch end here
-        return super().validation_epoch_end(val_step_outputs)
+        max_probs = torch.cat([x['Y_hat'] for x in val_step_outputs])
+        target = torch.cat([x['label'] for x in val_step_outputs],dim=0)
+        probs = torch.cat([x['Y_prob'] for x in val_step_outputs],dim=0)
+        
+        #---->
+        # valid_metrics only include cFscore
+        # and cFscore need three input, prob, pred, target
+        # can not directly use 
+        self.log_dict( self.valid_metrics(probs, max_probs.squeeze() , target.squeeze()),
+                          on_epoch = True, logger = True)

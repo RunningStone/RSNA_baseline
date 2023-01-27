@@ -12,7 +12,7 @@ class RSNADataset(Dataset):
                 cohort:Cohort, 
                 is_train=True,
                 get_transform:callable=get_transform,
-                three_channels_fn:callable=get_three_channels,
+                post_processing:callable=get_three_channels,
                 additional_info = ['laterality', 'view', 'age', 'implant'],):
         '''Initialize the dataset.
         Args:
@@ -27,7 +27,7 @@ class RSNADataset(Dataset):
 
         # Data Augmentation (custom for each dataset type)
         self.transform = get_transform(is_train=is_train)
-        self.three_channels_fn = three_channels_fn
+        self.post_processing = post_processing
         
         self.additional_info = additional_info
             
@@ -52,7 +52,7 @@ class RSNADataset(Dataset):
         image = self.cohort.read_slide(self.df,index)
         # Apply transforms
         transf_image = self.transform(image=image)['image']
-        transf_image = self.three_channels_fn(transf_image) # Change image from 1 channel (B&W) to 3 channels
+        transf_image = self.post_processing(transf_image) # Change image from 1 channel (B&W) to 3 channels
 
         # additional .csv information
         add_data = self.get_additional_info(index)

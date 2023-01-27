@@ -70,4 +70,12 @@ class BaselinePreTrain(nn.Module):
         # CLASSIF
         out = self.classification(image_meta_data)
 
-        return out
+        # produce output
+        results_dict = self.produce_out(out)
+        return results_dict
+
+    def produce_out(self,logits):
+        Y_hat = torch.argmax(logits, dim=1)
+        Y_prob = F.softmax(logits, dim = 1)
+        results_dict = {'logits': logits, 'Y_prob': Y_prob, 'Y_hat': Y_hat}
+        return results_dict
