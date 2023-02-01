@@ -36,11 +36,8 @@ def create_metrics(n_classes,):
 ###################################################################
 #     for cFscore as metrics
 ##################################################################
-def create_cFscore(n_classes,):
-    metrics_template = torchmetrics.MetricCollection([pF1Score])
-    return metrics_template
 
-class pF1Score(Metric):
+class pF1Score(torchmetrics.Metric):
     """
     Only for binary classification
     from paper: https://aclanthology.org/2020.eval4nlp-1.9.pdf 
@@ -97,6 +94,10 @@ class pF1Score(Metric):
         else:
             return 0.0
 
+
+def create_cFscore(n_classes,):
+    metrics_template = torchmetrics.MetricCollection([pF1Score])
+    return metrics_template
 
 
 
