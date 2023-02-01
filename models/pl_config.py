@@ -18,7 +18,7 @@ baseline_pl_para = PL_Para(
     #---->optimizer and loss
     max_epoch = 5,
     patience = 3,
-    num_workers = 8,
+    #num_workers = 8,
 
     #----> optimizer paras
     init_lr = 0.0005,
