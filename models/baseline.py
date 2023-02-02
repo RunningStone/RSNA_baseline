@@ -23,6 +23,7 @@ class BaselinePreTrain(nn.Module):
                         |-> classifior -> output
         csv: two linears|
         """
+        self.model_para = model_para
         #----> feature net
         self.backbone = model_para.backbone
         self.backbone_dim = model_para.backbone_dim
@@ -40,15 +41,20 @@ class BaselinePreTrain(nn.Module):
         
         # Define Feature part (IMAGE)
         self.get_encoder() # get encoder from timm
-        # (metadata)
-        self.csv = nn.Sequential(nn.Linear(self.no_columns, self.column_out_dim),
+        # (metadata) or not
+        if model_para.with_meta_net:
+            # meta_net
+            self.csv = nn.Sequential(nn.Linear(self.no_columns, self.column_out_dim),
                                  nn.BatchNorm1d(self.column_out_dim),
                                  nn.ReLU(),
                                  nn.Dropout(p=0.2))
         
-        # Define Classification part
-        self.classification = nn.Linear(self.backbone_dim \
-                                 + self.column_out_dim, self.output_size)
+            # Define Classification part
+            self.classification = nn.Linear(self.backbone_dim \
+                                    + self.column_out_dim, self.output_size)
+        else:
+            # Define Classification part
+            self.classification = nn.Linear(self.backbone_dim, self.output_size)
 
     def get_encoder(self):
         self.features = timm.create_model(self.backbone, \
@@ -62,10 +68,12 @@ class BaselinePreTrain(nn.Module):
         image = self.features(image)
   
         # CSV FNN
-        meta = self.csv(meta)
-
-        # Concatenate layers from image with layers from csv_data
-        image_meta_data = torch.cat((image, meta), dim=1)
+        if self.model_para.with_meta_net:
+            meta = self.csv(meta)
+            # Concatenate layers from image with layers from csv_data
+            image_meta_data = torch.cat((image, meta), dim=1)
+        else:
+            image_meta_data = image
 
         # CLASSIF
         out = self.classification(image_meta_data)

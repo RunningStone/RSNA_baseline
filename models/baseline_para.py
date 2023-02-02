@@ -9,6 +9,7 @@ class BaselinePara:
     output_size:int=1
 
     # only for baseline with csv meta
+    with_meta_net:bool=True
     no_columns:int=None
     column_out_dim:int=500
     
