@@ -54,7 +54,7 @@ class pF1Score(torchmetrics.Metric):
     https://www.kaggle.com/code/sohier/probabilistic-f-score/comments
     """
     def __init__(self,beta:float=1.0):
-        super().__init__()
+        super(pF1Score).__init__()
         self.beta = beta
         self.add_state("ctp", default=torch.tensor(0), dist_reduce_fx="sum")
         self.add_state("cfp", default=torch.tensor(0), dist_reduce_fx="sum")
@@ -94,10 +94,28 @@ class pF1Score(torchmetrics.Metric):
         else:
             return 0.0
 
+def torch_cFscore(probs,target,beta:float=1.0):
+     # only for binary classification [Bx2] or [Bx1] -> [B]
+    probs = probs[:,-1]
 
-def create_cFscore(n_classes,):
-    metrics_template = torchmetrics.MetricCollection([pF1Score])
-    return metrics_template
+    # get three values in loop part of base kaggle implementation
+    y_true_count = torch.sum(target == 1)
+
+    # ctp for label ==1 in probability score
+    ctp = probs[target==1].sum()
+
+    # cfp for label ==0 in probability score
+    cfp = probs[target==0].sum()
+
+    beta_squared = beta * beta
+    c_precision = ctp / (ctp + cfp)
+    c_recall = ctp / y_true_count
+    if (c_precision > 0 and c_recall > 0):
+        result = (1 + beta_squared) * (c_precision * c_recall) / (beta_squared * c_precision + c_recall)
+        return result
+    else:
+        return torch.Tensor(0.0)
+
 
 
 

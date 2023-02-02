@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 
 from ..pipeline.data_aug import get_transform,get_three_channels
-from ..pipeline.metrics import create_metrics,create_cFscore
+from ..pipeline.metrics import create_metrics
 from .baseline import BaselinePreTrain
 from ..pipeline.pl_para import PL_Para
 
@@ -39,4 +39,5 @@ baseline_pl_para.post_processing=get_three_channels
 baseline_pl_para.additional_info = ['age', 'implant'] # should be number if you want to feed into network
 
 #---->evaluate metric
-baseline_pl_para.create_metrics = create_cFscore # need define in models part or import create_cFscore 
+baseline_pl_para.create_metrics = create_metrics # need define in models part or import create_cFscore 
+baseline_pl_para.eval_cFscore_beta = 1.0

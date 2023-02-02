@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 
 
 from .pl_para import PL_Para
-from .metrics import create_metrics
+from .metrics import create_metrics,torch_cFscore
 
 
 class pl_base(pl.LightningModule):
@@ -22,7 +22,6 @@ class pl_base(pl.LightningModule):
         self.criterion = self.pl_para.criterion()
         self.model_para = model_para
         #self.save_hyperparameters()
-
         self.metrics()
 
     def metrics(self):
@@ -30,6 +29,7 @@ class pl_base(pl.LightningModule):
 
         self.valid_metrics = metrics.clone(prefix = 'val_')
         self.test_metrics = metrics.clone(prefix = 'test_')
+
 
     def pre_process(self, batch):
         img,meta, y = batch
@@ -73,4 +73,8 @@ class pl_base(pl.LightningModule):
         #---->
         self.log_dict(self.valid_metrics(max_probs.squeeze() , target.squeeze()),
                           on_epoch = True, logger = True)
+
+        #----> add additional part for cFscore in this project
+        probs = torch.cat([x['Y_prob'] for x in val_step_outputs],dim=0)
+        torch_cFscore(probs=probs,target=target.squeeze(),beta=self.pl_para.eval_cFscore_beta)
     

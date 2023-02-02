@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from .data_aug import get_transform,get_three_channels
-from .metrics import create_metrics,create_cFscore
+from .metrics import create_metrics
 
 @attr.s
 class PL_Para:
@@ -17,7 +17,6 @@ class PL_Para:
     #---->optimizer and loss
     max_epoch = 5
     patience = 3
-    num_workers = 8
 
     #----> optimizer paras
     init_lr = 0.0005
@@ -43,4 +42,5 @@ class PL_Para:
     additional_info = ['age', 'implant'] # should be number if you want to feed into network
 
     #---->evaluate metric
-    create_metrics:callable = None # need define in models part or import create_cFscore 
+    create_metrics:callable = create_metrics 
+    eval_cFscore_beta = 1.0
