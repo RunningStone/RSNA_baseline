@@ -6,11 +6,11 @@ from os import listdir
 import numpy as np
 import pandas as pd
 import pydicom
-
+from PIL import Image
 from tqdm import tqdm
 
 class Cohort:
-    def __init__(self,cohort_csv:str,slide_root:str):
+    def __init__(self,cohort_csv:str,slide_root:str,file_type:str='dcm'):
         """
         cohort_csv:str: csv file for cohort
         """
@@ -19,6 +19,10 @@ class Cohort:
         
 
         self.slide_root = slide_root
+
+        # file type
+        assert file_type in ['dcm','png']       
+        self.file_type = file_type
 
         self.loc_list = None
         self.kfold = None
@@ -42,10 +46,13 @@ class Cohort:
         all_paths = []
         for k in tqdm(range(len(self.df))):
             row = self.df.iloc[k, :]
-            all_paths.append(base_path 
-                            + str(row.patient_id) 
-                            + "/" + str(row.image_id) 
-                            + ".dcm")
+            if self.file_type == 'dcm':
+                f_name = f"{base_path}/{str(row.patient_id)}/{str(row.image_id)}.dcm"
+            elif self.file_type == 'png':
+                f_name = f"{base_path}/{str(row.patient_id)}_{str(row.image_id)}.png"
+            else:
+                raise ValueError(f"file type {self.file_type} not supported..")
+            all_paths.append(f_name)
         self.df["path"] = all_paths
         self.loc_list = all_paths
 
@@ -62,7 +69,10 @@ class Cohort:
             image: np.array
         """
         image_path = df.iloc[idx]['path']
-        image = pydicom.dcmread(image_path).pixel_array.astype(np.float32)
+        if self.file_type == 'png':
+            image = np.array(Image.open(image_path))
+        elif self.file_type == 'dcm':
+            image = pydicom.dcmread(image_path).pixel_array.astype(np.float32)
         return image
 
     def init_k_fold(self,K:int = 4):

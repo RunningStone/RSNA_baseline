@@ -51,13 +51,44 @@ pl_model = pl_baseline(pl_para, model_para)
 #######################################################
 # init dataloader
 #######################################################
-from .pipeline.dataset import RSNADataset
+from RSNA_baseline.pipeline.dataset import RSNADataset
 from torch.utils.data import DataLoader
-dataset = RSNADataset(cohort=cohort,is_train=True)
-data_loader = DataLoader(dataset, 
+trainset = RSNADataset(cohort=cohort,is_train=True,additional_info=pl_para.additional_info)
+trainloader = DataLoader(trainset, 
+                        batch_size=pl_para.batch_size, 
+                        shuffle=pl_para.shuffle, 
+                        num_workers=pl_para.num_workers)
+
+valset = RSNADataset(cohort=cohort,is_train=False,additional_info=pl_para.additional_info)
+valloader = DataLoader(valset, 
                         batch_size=pl_para.batch_size, 
                         shuffle=pl_para.shuffle, 
                         num_workers=pl_para.num_workers)
 #######################################################
 # init trainer
 #######################################################
+
+import pytorch_lightning as pl
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.callbacks import ModelCheckpoint
+from copy import deepcopy
+import torch
+import gc
+
+# trainer config
+trainer = pl.Trainer(
+    accelerator='gpu', 
+    precision=32,
+    default_root_dir='.log_causal_lm',
+    max_epochs=10,
+    callbacks=[
+        EarlyStopping(monitor='dev_loss',patience=2), # 監測dev_loss的變化，超過兩次沒有改進就停止
+        ModelCheckpoint(monitor='dev_loss',filename='{epoch}-{dev_loss:.2f}',save_last=True),
+    ]
+)
+
+
+for param in pl_model.model.features.parameters():
+    param.requires_grad = False
+
+trainer.fit(pl_model,trainloader,valloader)
