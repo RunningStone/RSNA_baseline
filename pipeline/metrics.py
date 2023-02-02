@@ -114,7 +114,7 @@ def torch_cFscore(probs,target,beta:float=1.0):
         result = (1 + beta_squared) * (c_precision * c_recall) / (beta_squared * c_precision + c_recall)
         return result
     else:
-        return torch.Tensor(0.0)
+        return torch.Tensor([0.0])
 
 
 

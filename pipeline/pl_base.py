@@ -76,5 +76,5 @@ class pl_base(pl.LightningModule):
 
         #----> add additional part for cFscore in this project
         probs = torch.cat([x['Y_prob'] for x in val_step_outputs],dim=0)
-        torch_cFscore(probs=probs,target=target.squeeze(),beta=self.pl_para.eval_cFscore_beta)
-    
+        cf=torch_cFscore(probs=probs,target=target.squeeze(),beta=self.pl_para.eval_cFscore_beta)
+        self.log('val_cFscore', cf,on_epoch = True, logger = True)
