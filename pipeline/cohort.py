@@ -70,7 +70,7 @@ class Cohort:
         """
         image_path = df.iloc[idx]['path']
         if self.file_type == 'png':
-            image = np.array(Image.open(image_path))
+            image = np.array(Image.open(image_path)).astype(np.float32)
         elif self.file_type == 'dcm':
             image = pydicom.dcmread(image_path).pixel_array.astype(np.float32)
         return image
